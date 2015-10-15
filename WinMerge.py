@@ -19,8 +19,20 @@ def recordActiveFile(f):
 	fileB = fileA
 	fileA = f
 
+def getWindowFile():
+	global fileA
+	global fileB
+	for f in sublime.active_window().views():
+		if (fileA == None) and (f.file_name() != fileB):
+			fileA = f.file_name()
+		if (fileB == None) and (f.file_name() != fileA):
+			fileB = f.file_name()
+
 class WinMergeCommand(sublime_plugin.ApplicationCommand):
+
 	def run(self):
+		if (fileA == None) or (fileB == None):
+			getWindowFile()
 		cmd_line = '%s /e /ul /ur "%s" "%s"' % (WINMERGE, fileA, fileB)
 		print("WinMerge command: " + cmd_line)
 		Popen(cmd_line)
